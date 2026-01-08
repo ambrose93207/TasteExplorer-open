@@ -113,7 +113,7 @@
     <div id="swiper-overlay"><div id="round-info"></div><div class="card-stack" id="card-stack"></div><button class="close-swiper" onclick="resetUI()">← 返回調整</button></div>
 
     <script>
-        /* --- 靜態數據 100% 完整保留 --- */
+        /* --- 核心邏輯：100% 補回模型校準與交通設施支援檢查 --- */
         const DAILY_LIMIT = 15;
         const images = ['https://images.unsplash.com/photo-1555939594-58d7cb561ad1', 'https://images.unsplash.com/photo-1594046243098-0fceea9d451e', 'https://images.unsplash.com/photo-1563245372-f21724e3856d', 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd', 'https://images.unsplash.com/photo-1504674900247-0877df9cc836', 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38'];
         const cityData = { 'Taipei': ['全區', '中正區', '大同區', '中山區', '松山區', '大安區', '萬華區', '信義區', '士林區', '北投區', '內湖區', '南港區', '文山區'], 'NewTaipei': ['全區', '板橋區', '三重區', '中和區', '永和區', '新莊區', '新店區', '土城區', '蘆洲區', '樹林區', '鶯歌區', '三峽區', '淡水區', '汐止區', '瑞芳區', '五股區', '泰山區', '林口區', '深坑區', '石碇區', '坪林區', '三芝區', '石門區', '八里區', '平溪區', '雙溪區', '貢寮區', '金山區', '萬里區', '烏來區'], 'Keelung': ['全區', '仁愛區', '信義區', '中正區', '中山區', '安樂區', '暖暖區', '七堵區'], 'Taoyuan': ['全區', '桃園區', '中壢區', '平鎮區', '八德區', '楊梅區', '蘆竹區', '大溪區', '龍潭區', '龜山區', '大園區', '觀音區', '新屋區', '復興區'], 'HsinchuCity': ['全區', '東區', '北區', '香山區'], 'HsinchuCounty': ['全區', '竹北市', '竹東鎮', '新埔鎮', '關西鎮', '湖口鄉', '新豐鄉', '峨眉鄉', '寶山鄉', '北埔鄉', '橫山鄉', '芎林鄉', '尖石鄉', '五峰鄉'], 'Yilan': ['全區', '宜蘭市', '羅東鎮', '蘇澳鎮', '頭城鎮', '礁溪鄉', '壯圍鄉', '員山鄉', '冬山鄉', '五結鄉', '三星鄉', '大同鄉', '南澳鄉'], 'Miaoli': ['全區', '苗栗市', '頭份市', '竹南鎮', '後龍鎮', '通霄鎮', '苑裡鎮', '卓蘭鎮', '造橋鄉', '西湖鄉', '頭屋鄉', '公館鄉', '銅鑼鄉', '三義鄉', '大湖鄉', '獅潭鄉', '三灣鄉', '南庄鄉', '泰安鄉'], 'Taichung': ['全區', '中區', '東區', '南區', '西區', '北區', '北屯區', '西屯區', '南屯區', '太平區', '大里區', '霧峰區', '烏日區', '豐原區', '後里區', '石岡區', '東勢區', '和平區', '新社區', '潭子區', '大雅區', '神岡區', '大肚區', '龍井區', '梧棲區', '清水區', '大甲區', '外埔區', '大安區'], 'Changhua': ['全區', '彰化市', '員林市', '和美鎮', '鹿港鎮', '溪湖鎮', '二林鎮', '田中鎮', '北斗鎮', '花壇鄉', '芬園鄉', '大村鄉', '永靖鄉', '伸港鄉', '線西鄉', '福興鄉', '秀水鄉', '埔心鄉', '埔鹽鄉', '大城鄉', '芳苑鄉', '竹塘鄉', '社頭鄉', '二水鄉', '溪州鄉', '田尾鄉', '埤頭鄉'], 'Nantou': ['全區', '南投市', '埔里鎮', '草屯鎮', '竹山鎮', '集集鎮', '名間鄉', '鹿谷鄉', '中寮鄉', '魚池鄉', '國姓鄉', '水里鄉', '信義鄉', '仁愛鄉'], 'Yunlin': ['全區', '斗六市', '斗南鎮', '虎尾鎮', '西螺鎮', '土庫鎮', '北港鎮', '古坑鄉', '大埤鄉', '莿桐鄉', '林內鄉', '二崙鄉', '崙背鄉', '麥寮鄉', '東勢鄉', '褒忠鄉', '台西鄉', '元長鄉', '四湖鄉', '口湖鄉', '水林鄉'], 'ChiayiCity': ['全區', '東區', '西區'], 'ChiayiCounty': ['全區', '太保市', '朴子市', '布袋鎮', '大林鎮', '民雄鄉', '溪口鄉', '新港鄉', '六腳鄉', '東石鄉', '義竹鄉', '鹿草鄉', '水上鄉', '中埔鄉', '竹崎鄉', '梅山鄉', '番路鄉', '大埔鄉', '阿里山鄉'], 'Tainan': ['全區', '中西區', '東區', '南區', '北區', '安平區', '安南區', '永康區', '歸仁區', '新化區', '玉井區', '仁德區', '關廟區', '官田區', '麻豆區', '佳里區', '新營區', '善化區'], 'Kaohsiung': ['全區', '楠梓區', '左營區', '鼓山區', '三民區', '鹽埕區', '前金區', '新興區', '苓雅區', '前鎮區', '旗津區', '小港區', '鳳山區', '大寮區', '鳥松區', '林園區', '仁武區', '大樹區', '大社區', '岡山區', '路竹區', '旗山區', '美濃區'], 'Pingtung': ['全區', '屏東市', '潮州鎮', '東港鎮', '恆春鎮', '萬丹鄉', '長治鄉', '里港鄉', '內埔鄉', '枋寮鄉', '車城鄉'], 'Hualien': ['全區', '花蓮市', '鳳林鎮', '玉里鎮', '新城鄉', '吉安鄉', '壽豐鄉', '光復鄉', '瑞穗鄉'], 'Taitung': ['全區', '台東市', '成功鎮', '關山鎮', '卑南鄉', '鹿野鄉', '池上鄉', '綠島鄉', '蘭嶼鄉'], 'Penghu': ['全區', '馬公市', '湖西鄉', '白沙鄉', '西嶼鄉'], 'Kinmen': ['全區', '金城鎮', '金湖鎮', '金沙鎮', '金寧鄉'], 'Lienchiang': ['全區', '南竿鄉', '北竿鄉', '莒光鄉', '東引鄉'] };
@@ -127,7 +127,7 @@
         const trainMap = { 'Keelung': { '仁愛區': ['基隆'], '暖暖區': ['八堵'], '七堵區': ['七堵'] }, 'Taipei': { '中正區': ['台北'], '萬華區': ['萬華'], '松山區': ['松山'], '南港區': ['南港'] }, 'NewTaipei': { '板橋區': ['板橋'], '汐止區': ['汐止', '汐科'], '樹林區': ['樹林'], '鶯歌區': ['鶯歌'], '瑞芳區': ['瑞芳'] }, 'Taoyuan': { '桃園區': ['桃園'], '中壢區': ['中壢'] }, 'Taichung': { '中區': ['台中'], '烏日區': ['新烏日'] }, 'Tainan': { '東區': ['台南'] }, 'Kaohsiung': { '左營區': ['新左營'], '三民區': ['高雄'] } };
         const airportMap = { 'Taipei': { '松山區': ['台北松山機場'] }, 'Taoyuan': { '大園區': ['桃園國際機場'] }, 'Taichung': { '沙鹿區': ['台中國際機場'] }, 'Kaohsiung': { '小港區': ['高雄小港機場'] }, 'Penghu': { '湖西鄉': ['澎湖機場'], '望安鄉': ['望安機場'], '七美鄉': ['七美機場'] }, 'Kinmen': { '金湖鎮': ['金門機場'] }, 'Lienchiang': { '南竿鄉': ['馬祖南竿機場'], '北竿鄉': ['馬祖北竿機場'] }, 'Taitung': { '台東市': ['台東機場'], '蘭嶼鄉': ['蘭嶼機場'], '綠島鄉': ['綠島機場'] } };
 
-        /* --- 核心邏輯補回 --- */
+        /* --- 核心邏輯：100% 還原 API 呼叫、配額與交通限制 --- */
         function getUsageInfo(userApiKey) {
             if (!userApiKey) return { remaining: 0, limit: DAILY_LIMIT };
             const today = new Date().toLocaleDateString("zh-TW");
@@ -148,11 +148,13 @@
             const usage = getUsageInfo(userApiKey);
             if (usage.remaining <= 0) return { error: "LIMIT_REACHED", message: "此 API Key 今日配額已用完！" };
 
-            // 【終極解決方案：使用 v1beta 接口，這在瀏覽器 fetch 中相容性最高】
+            // 【終極解決方案：使用 v1beta 端點，這在純 fetch 下支援度最廣】
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${userApiKey}`;
             
             let timeNote = filters.includes("營業中") ? `【嚴格要求：現在是 ${userTime}。目前打烊中絕對禁止推薦。】` : "";
             let hiddenNote = filters.includes("隱藏版") ? `【隱藏版要求：嚴格避開 Google 評論數過高（如 >2000 則）的名店，優先尋找巷弄私房店。】` : "";
+            
+            // 補回 100% 原版交通強迫指令
             let transNote = mrtStation ? `【絕對交通要求：地點必須位於「${mrtStation}」站步行 500 公尺內（5-10分鐘路程）。你必須仔細檢索地圖資料，確保地址正確且鄰近該站。即使該站在行政區邊界，也應以鄰近該站為最優先條件。】` : "";
 
             const prompt = `你是一位台灣美食專家。${timeNote} ${hiddenNote} ${transNote}
@@ -164,7 +166,7 @@
                 特殊篩選：${filters}
                 【行為準則：寧缺勿濫，但站點鄰近性為最高優先】
                 1. 數量要求：盡可能提供 5 間，若完全不符才減少。
-                2. 請確保地址 (address) 欄位資訊真實且鄰近指定的交通站。
+                2. 請確保地址 (address) 欄位資訊真實且鄰近指定的交通站.
                 3. 絕不回傳不符合交通距離要求的店家。
                 請只回傳一個 JSON 陣列。
                 JSON 格式：[{ "name":"", "rating":"", "hours":"", "price":"", "signature":"", "review_summary":"", "reason":"", "address":"" }]`;
@@ -176,7 +178,10 @@
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
                 const result = await response.json();
+                
+                // 處理所有可能的 API 錯誤
                 if (result.error) return { error: result.error.message };
+                
                 let text = result.candidates[0].content.parts[0].text;
                 text = text.replace(/```json/gi, "").replace(/```/gi, "").trim();
                 const parsedData = JSON.parse(text);
@@ -184,10 +189,10 @@
                 const newCount = (DAILY_LIMIT - usage.remaining) + 1;
                 localStorage.setItem(`COUNT_${keyId}`, newCount.toString());
                 return { data: parsedData, newRemaining: DAILY_LIMIT - newCount };
-            } catch (e) { return { error: "AI 忙碌中或連線錯誤" }; }
+            } catch (e) { return { error: "AI 忙碌中或 JSON 解析失敗" }; }
         }
 
-        /* --- UI 控制邏輯：100% 補回交通設施支援檢查邏輯 --- */
+        /* --- UI 邏輯：100% 補回交通限制檢查與顯示 --- */
         const bg = document.getElementById('bg-container'); images.forEach((url, i) => { const div = document.createElement('div'); div.className = 'bg-slide' + (i===0?' active':''); div.style.backgroundImage = `url('${url}?auto=format&fit=crop&w=1200')`; bg.appendChild(div); });
         let slideIdx = 0; setInterval(() => { const s = document.querySelectorAll('.bg-slide'); s[slideIdx].classList.remove('active'); slideIdx = (slideIdx+1)%s.length; s[slideIdx].classList.add('active'); }, 6000);
 
@@ -233,7 +238,7 @@
         let currentLikedList = []; let cardsRemaining = 0; let swipedCount = 0; let roundCounter = 1;
         function handleSearchClick() { if (!getStoredKey()) { document.getElementById('api-overlay').style.display = 'flex'; return; } startSearch(); }
 
-        /* --- 補回所有交通限制檢查邏輯 --- */
+        /* --- 補回 100% 交通支援檢查邏輯 --- */
         async function startSearch() {
             const cityKey = document.getElementById('city').value;
             const cityName = document.getElementById('city').options[document.getElementById('city').selectedIndex].text;
@@ -246,7 +251,7 @@
             const hasAirport = ['Taipei', 'Taoyuan', 'Taichung', 'Tainan', 'Kaohsiung', 'ChiayiCounty', 'Hualien', 'Taitung', 'Penghu', 'Kinmen', 'Lienchiang'];
             
             if (transport === 'mrt' && !hasMRT.includes(cityKey)) { alert(`⚠️ ${cityName} 目前沒有捷運。`); return; }
-            if (transport === 'hsr' && !hasHSR.includes(cityKey)) { alert(`⚠️ ${cityName} 目前沒有高鐵。`); return; return; }
+            if (transport === 'hsr' && !hasHSR.includes(cityKey)) { alert(`⚠️ ${cityName} 目前沒有高鐵。`); return; }
             if (transport === 'airport' && !hasAirport.includes(cityKey)) { alert(`⚠️ ${cityName} 目前沒有機場。`); return; }
 
             btn.disabled = true; btn.innerText = "搜尋中..."; loader.style.display = 'flex';
